@@ -119,3 +119,4 @@ function power(val, pow) {
 //     guessAmount++;
 // }
 
+//hw-check
