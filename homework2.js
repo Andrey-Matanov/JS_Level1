@@ -91,8 +91,6 @@ function power(val, pow) {
             return 1;
         } else if (pow < 0) {
             return 1 / power(val, -pow);
-        } else if (pow == 1) {
-            return val;
         } else {
             return val * power(val, pow - 1);
         }
@@ -113,8 +111,8 @@ while (gameNotFinished) {
         alert("Правильно! Вы угадали число с " + ++guessAmount + " попытки!");
         gameNotFinished = false;
     } else if (nextGuess == null) {
-      alert("Вы завершили игру");
-      break;
+        alert("Вы завершили игру");
+        break;
     } else if (nextGuess < randomNumber) {
         alert("Загаданное число - больше!");
     } else {
