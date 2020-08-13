@@ -421,3 +421,5 @@ function generateRandomNumberWithDifferentDigits() {
 
     return randomNumber;
 }
+
+// hw4
