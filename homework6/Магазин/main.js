@@ -2,6 +2,54 @@
 
 // addShopRangeToDocument - добавляет ассортимент товаров на страницу
 
+function initializeShopRangeOnDocument_2() {
+    let shopRangeDiv = document.querySelector('.shop-range');
+    let htmlString = '';
+
+    htmlString +=
+        `
+        <h2 class="shop-range-heading">Ассортимент товаров</h2>
+        <div class="shop-range-list">
+        `;
+
+    for (let product of shopRange) {
+        htmlString += `
+        <div class="shop-range-item">
+        <p class="shop-range-item-name">${product['name']}</p>
+        <img src="${product['src']}" class="shop-range-item-image">
+        <p class="shop-range-item-price">Цена за один товар: ${product['priceForOne']}.</p>
+        <div class="shop-range-item-buttons">
+            <button name="${product['name']}" class="shop-range-item-add-button button">
+                Добавить товар(ы) в корзину
+                </button>
+            <p class="shop-range-item-buttons-text">
+                Количество товаров, которое вы хотите добавить или удалить:
+                </p>
+            <button name="${product['name']}" class="shop-range-item-delete-button button">
+                Удалить товар(ы) из корзины
+                </button>
+            <input type="number" value="1" min="1" max="50" class="shop-range-item-amount-button button">
+            </div>
+        </div>
+        `
+    }
+
+    htmlString += `</div>`;
+
+    shopRangeDiv.innerHTML = htmlString;
+
+    let buttonsContainers = document.querySelectorAll('.shop-range-item-buttons');
+
+    for (let buttonsContainer of buttonsContainers) {
+        buttonsContainer.children[0].addEventListener('click', addProductToBasket);
+        buttonsContainer.children[2].addEventListener('click', deleteProductFromBasket);
+    }
+}
+
+function initializeBasketOnDocument_2() {
+
+}
+
 function initializeShopRangeOnDocument() {
     let shopRangeDiv = document.querySelector('.shop-range');
     let shopRangeHeading = document.createElement('h2');
@@ -34,7 +82,8 @@ function initializeShopRangeOnDocument() {
         shopRangeItemDeleteProductButton.innerText = 'Удалить товар(ы) из корзины';
         shopRangeItemDeleteProductButton.setAttribute('name', product['name']);
         shopRangeItemDeleteProductButton.setAttribute('title', 'В окне количества товаров введите число от 1 до 50');
-        shopRangeItemDeleteProductButton.addEventListener('click', deleteProductFromBasket);
+        // shopRangeItemDeleteProductButton.addEventListener('click', deleteProductFromBasket);
+        shopRangeItemDeleteProductButton.onclick = deleteProductFromBasket;
         shopRangeItemAmountButton.setAttribute('type', 'number');
         shopRangeItemAmountButton.setAttribute('title', 'Введите число от 1 до 50');
         shopRangeItemAmountButton.setAttribute('value', 1);
@@ -118,7 +167,7 @@ function updateBasketList() {
             basketList.appendChild(basketListItem);
         }
 
-        basketPriceText.innerText = `В корзине ${totalAmount} ${returnCase(totalAmount)}. Общая стоимость товаров : ${returnBasketPrice()}`;
+        basketPriceText.innerText = `В корзине ${totalAmount} ${returnCase(totalAmount)}.Общая стоимость товаров: ${returnBasketPrice()} `;
 
         basketListMain.appendChild(basketListText);
         basketListMain.appendChild(basketList);
@@ -237,7 +286,7 @@ let shopRange = [
     {
         name: 'Яблоки',
         priceForOne: 10,
-        src: 'assets/apple.jpg',
+        src: 'assets\\apple.jpg',
     },
     {
         name: 'Картофель',
@@ -283,5 +332,8 @@ let shopRange = [
 
 let basket = [];
 
-initializeShopRangeOnDocument();
+// initializeShopRangeOnDocument();
+// initializeBasketOnDocument();
+
+initializeShopRangeOnDocument_2();
 initializeBasketOnDocument();
