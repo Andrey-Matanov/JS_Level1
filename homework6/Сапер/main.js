@@ -117,29 +117,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Функция выставления, снятия флага
-    function flag(event) {
-        if (gameFinished) return;
+    function makeFlagHandler(cellClicked) {
 
-        var cellClicked = gameBoard.cells[event.target.getAttribute('y')][event.target.getAttribute('x')];
+        function flag(event) {
+            if (gameFinished) return;
+    
+            // var cellClicked = gameBoard.cells[event.target.getAttribute('y')][event.target.getAttribute('x')];
+    
+            event.preventDefault();
+    
+            if (cellClicked.isOpened) return;
+    
+            if (cellClicked.isFlaged) {
+                cellClicked.element.innerHTML = '';
+                cellClicked.element.classList.remove('flag');
+                cellClicked.isFlaged = false;
+                gameBoard.flagsNum--;
+            } else if (gameBoard.flagsNum<BOMBSAMOUNT) {
+                cellClicked.element.innerHTML = '&#128681';
+                cellClicked.element.classList.add('flag');
+                cellClicked.isFlaged = true;
+                gameBoard.flagsNum++;
+            };
+    
+            renderCounters();
+        }
 
-        event.preventDefault();
-
-        if (cellClicked.isOpened) return;
-
-        if (cellClicked.isFlaged) {
-            cellClicked.element.innerHTML = '';
-            cellClicked.element.classList.remove('flag');
-            cellClicked.isFlaged = false;
-            gameBoard.flagsNum--;
-        } else if (gameBoard.flagsNum<BOMBSAMOUNT) {
-            cellClicked.element.innerHTML = '&#128681';
-            cellClicked.element.classList.add('flag');
-            cellClicked.isFlaged = true;
-            gameBoard.flagsNum++;
-        };
-
-        renderCounters();
+        return flag;
     }
+
 
     function initBoard() {
         // Очищаем поле на странице
@@ -162,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 gameBoard.cells[i][j] = { element: cell, x: j, y: i, isOpened: false, isFlaged: false };
 
                 cell.addEventListener('click', click);
-                cell.addEventListener('contextmenu', flag);
+                cell.addEventListener('contextmenu', makeFlagHandler(gameBoard.cells[i][j]));
             }
         }
 
