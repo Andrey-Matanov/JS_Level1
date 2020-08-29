@@ -34,8 +34,109 @@ function initializeShopRangeOnDocument() {
 
     shopRangeDiv.innerHTML = htmlString;
 
-    document.querySelectorAll('.shop-range-item-add-button').forEach((button) => button.addEventListener('click', addSomeAmountToBasket));
-    document.querySelectorAll('.shop-range-item-delete-button').forEach((button) => button.addEventListener('click', deleteSomeAmountFromBasket));
+    let shopRangeItemsButtons = document.querySelectorAll('.shop-range-item-buttons');
+
+    for (let item of shopRangeItemsButtons) {
+        let addButton = item.children[0];
+        let deleteButton = item.children[2];
+        addEventListenersAddButton(addButton);
+        addEventListenersDeleteButton(deleteButton);
+    }
+}
+
+// addEventListenersAddButton - привязывает к кнопке button функции preventContextMenu и addSomeAmountToBasket
+
+function addEventListenersAddButton(button) {
+    // preventContextMenu - при нажатии на кнопку правой кнопкой мыши меню не будет появляться
+
+    function preventContextMenu(event) {
+        event.preventDefault();
+    }
+
+    // addSomeAmountToBasket - добавляет определенное количество товаров в корзину
+
+    function addSomeAmountToBasket(event) {
+        let productName = event.target.getAttribute('name');
+        let productAmount = parseInt(event.target.parentElement.lastElementChild.value);
+
+        if (productAmount <= 1) {
+            event.target.parentElement.lastElementChild.value = 1;
+            productAmount = 1;
+        } else if (productAmount >= 50) {
+            event.target.parentElement.lastElementChild.value = 50;
+            productAmount = 50;
+        }
+
+        if (isNaN(productAmount) || productAmount < 1 || productAmount > 50) {
+            return;
+        }
+
+        let productFound = false;
+
+        for (let product of basket) {
+            if (product['name'] == productName) {
+                product['amount'] += productAmount;
+                if (product['amount'] > 50) {
+                    product['amount'] = 50;
+                }
+                productFound = true;
+                break;
+            }
+        }
+
+        if (!productFound) {
+            basket.push({
+                name: productName,
+                amount: productAmount
+            })
+        }
+
+        updateBasketList();
+    }
+
+
+    button.addEventListener('contextmenu', preventContextMenu);
+    button.addEventListener('click', addSomeAmountToBasket)
+}
+
+// addEventListenersDeleteButton - привязывает к кнопке button функции preventContextMenu и deleteSomeAmountFromBasket
+
+function addEventListenersDeleteButton(button) {
+    // preventContextMenu - при нажатии на кнопку правой кнопкой мыши меню не будет появляться
+
+    function preventContextMenu(event) {
+        event.preventDefault();
+    }
+
+    // deleteSomeAmountFromBasket - удаляет определенное количество товаров из корзины
+
+    function deleteSomeAmountFromBasket(event) {
+        let productName = event.target.getAttribute('name');
+        let productAmount = parseInt(event.target.parentElement.lastElementChild.value);
+
+        if (productAmount <= 1) {
+            event.target.parentElement.lastElementChild.value = 1;
+            productAmount = 1;
+        } else if (productAmount >= 50) {
+            event.target.parentElement.lastElementChild.value = 50;
+            productAmount = 50;
+        }
+
+        for (let i = 0; i < basket.length; i++) {
+            if (basket[i]['name'] == productName) {
+                basket[i]['amount'] -= productAmount;
+
+                if (basket[i]['amount'] <= 0) {
+                    basket.splice(i, 1);
+                }
+            }
+        }
+
+        updateBasketList();
+    }
+
+    button.addEventListener('contextmenu', preventContextMenu);
+    button.addEventListener('click', deleteSomeAmountFromBasket);
 }
 
 // initiateShopRangePrices - инициализирует объект ShopRangePrices
@@ -118,7 +219,7 @@ function updateBasketList() {
     localStorage.setItem("basket", JSON.stringify(basket));
 }
 
-// returnMiniImage
+// returnMiniImage - возвращает картинку маленького размера
 
 function returnMiniImage(name) {
     for (let product of shopRange) {
@@ -126,73 +227,7 @@ function returnMiniImage(name) {
     }
 }
 
-// addSomeAmountToBasket - добавляет определенное количество товаров в корзину
-
-function addSomeAmountToBasket(event) {
-    let productName = event.target.getAttribute('name');
-    let productAmount = parseInt(event.target.parentElement.lastElementChild.value);
-
-    if (productAmount <= 1) {
-        event.target.parentElement.lastElementChild.value = 1;
-        productAmount = 1;
-    } else if (productAmount >= 50) {
-        event.target.parentElement.lastElementChild.value = 50;
-        productAmount = 50;
-    }
-
-    if (isNaN(productAmount) || productAmount < 1 || productAmount > 50) {
-        return;
-    }
-
-    let productFound = false;
-
-    for (let product of basket) {
-        if (product['name'] == productName) {
-            product['amount'] += productAmount;
-            if (product['amount'] > 50) {
-                product['amount'] = 50;
-            }
-            productFound = true;
-            break;
-        }
-    }
-
-    if (!productFound) {
-        basket.push({
-            name: productName,
-            amount: productAmount
-        })
-    }
-
-    updateBasketList();
-}
-
-// deleteSomeAmountFromBasket - удаляет определенное количество товаров из корзины
-
-function deleteSomeAmountFromBasket(event) {
-    let productName = event.target.getAttribute('name');
-    let productAmount = parseInt(event.target.parentElement.lastElementChild.value);
-
-    if (productAmount <= 1) {
-        event.target.parentElement.lastElementChild.value = 1;
-        productAmount = 1;
-    } else if (productAmount >= 50) {
-        event.target.parentElement.lastElementChild.value = 50;
-        productAmount = 50;
-    }
-
-    for (let i = 0; i < basket.length; i++) {
-        if (basket[i]['name'] == productName) {
-            basket[i]['amount'] -= productAmount;
-
-            if (basket[i]['amount'] <= 0) {
-                basket.splice(i, 1);
-            }
-        }
-    }
-
-    updateBasketList();
-}
+// deleteProductFromBasket - функция полного удаления товара определенного вида из корзины
 
 function deleteProductFromBasket(event) {
     let productName = event.target.getAttribute('name');
