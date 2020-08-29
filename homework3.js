@@ -214,7 +214,7 @@ function proccessBasketOperation(message, basket) {
         }
     }
 
-    return 5;
+    return 6;
 }
 
 // checkMsgArrayData - проверяет корректность введенной команды корзине
